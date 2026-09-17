@@ -1,1 +1,1 @@
-my_host_specific_variable: itsmanaged
+custom_value: "valoare din host_vars"

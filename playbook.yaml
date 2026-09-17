@@ -9,10 +9,31 @@
       name: apache2
       state: latest
 
+  - name: generate vhost server config file
+    ansible.builtin.template:
+      src: templates/vhost.conf.j2
+      dest: /etc/apache2/sites-available/000-default.conf
+    vars:
+      server_name: "myserver.local"
+      document_root: "/var/www/html"
+
   - name: server config file
     ansible.builtin.template:
-      src: /home/kali/Documents/Ansible_Project/templates/apache2.j2
+      src: templates/apache2.j2
       dest: /etc/apache2/apache2.conf
+
+  - name: activate the website
+    ansible.builtin.command: a2ensite 000-default.conf
+
+  - name: create a static html page with custom value
+    ansible.builtin.template:
+      src: templates/index.html.j2
+      dest: /var/www/html/index.html
+
+  - name: reload apache2
+    ansible.builtin.service:
+      name: apache2
+      state: reloaded
 
   - name: enable and start the service
     ansible.builtin.service:
@@ -20,10 +41,3 @@
       state: started
       enabled: true
 
-  - name: create a static html page with custom value
-    ansible.builtin.template:
-      src: /home/kali/Documents/Ansible_Project/templates/index.html.j2
-      dest: /var/www/html/index.html
-
-    vars:
-      custom_value: text random scris in playbook.yaml
