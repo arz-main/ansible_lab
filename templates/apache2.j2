@@ -1,0 +1,15 @@
+Listen {{ apache_port | default(80) }}
+
+ServerName {{ server_name | default('localhost') }}
+DocumentRoot {{ document_root | default('/var/www/html') }}
+
+<Directory "{{ document_root | default('/var/www/html') }}">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>
+
+DirectoryIndex index.html
+
+ErrorLog logs/error_log
+CustomLog logs/access_log combined

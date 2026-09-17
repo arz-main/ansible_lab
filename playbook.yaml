@@ -1,0 +1,29 @@
+---
+- name: configure a web server
+  hosts: managed_node
+  remote_user: root
+
+  tasks:
+  - name: install web server
+    ansible.builtin.package:
+      name: apache2
+      state: latest
+
+  - name: server config file
+    ansible.builtin.template:
+      src: /home/kali/Documents/Ansible_Project/templates/apache2.j2
+      dest: /etc/apache2/apache2.conf
+
+  - name: enable and start the service
+    ansible.builtin.service:
+      name: apache2
+      state: started
+      enabled: true
+
+  - name: create a static html page with custom value
+    ansible.builtin.template:
+      src: /home/kali/Documents/Ansible_Project/templates/index.html.j2
+      dest: /var/www/html/index.html
+
+    vars:
+      custom_value: text random scris in playbook.yaml

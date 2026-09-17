@@ -1,0 +1,9 @@
+<html>
+  <body>
+    <h1>Server Info</h1>
+    <p>Hostname: {{ ansible_hostname }}</p>
+    <p>Distributie: {{ ansible_distribution }} {{ ansible_distribution_version }}</p>
+    <p>IP: {{ ansible_default_ipv4.address }}</p>
+    <p>Valoare custom: {{ custom_value }}</p>
+  </body>
+</html>
