@@ -1,43 +1,15 @@
----
-- name: configure a web server
-  hosts: managed_node
-  remote_user: root
+- name: exercitiu despre bucle, conditii, portabilitate
+  hosts: all
 
   tasks:
-  - name: install web server
-    ansible.builtin.package:
-      name: apache2
-      state: latest
+    - name: check if cron is running
+      ansible.builtin.command: systemctl is-active cron
+      register: cron_state # saves the output of the module that ran
+      changed_when: false # doesn't mark this task as changed no matter what it does
+      failed_when: false # doesn't mark this task as failed no matter the return code
+      check_mode: false
 
-  - name: generate vhost server config file
-    ansible.builtin.template:
-      src: templates/vhost.conf.j2
-      dest: /etc/apache2/sites-available/000-default.conf
-    vars:
-      server_name: "myserver.local"
-      document_root: "/var/www/html"
-
-  - name: server config file
-    ansible.builtin.template:
-      src: templates/apache2.j2
-      dest: /etc/apache2/apache2.conf
-
-  - name: activate the website
-    ansible.builtin.command: a2ensite 000-default.conf
-
-  - name: create a static html page with custom value
-    ansible.builtin.template:
-      src: templates/index.html.j2
-      dest: /var/www/html/index.html
-
-  - name: reload apache2
-    ansible.builtin.service:
-      name: apache2
-      state: reloaded
-
-  - name: enable and start the service
-    ansible.builtin.service:
-      name: apache2
-      state: started
-      enabled: true
-
+    - name: this should never print
+      ansible.builtin.debug:
+        msg: "very very secret info"
+      when: ( secret_var | default('')) == "anomaly"
