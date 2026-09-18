@@ -1,0 +1,5 @@
+- name: Configurare webserver apache
+  hosts: managed_node
+
+  roles: # conceptual functioneaza ca un copy paste din folderul roles. Toate artefactele necesare sunt puse aici
+    - apache
