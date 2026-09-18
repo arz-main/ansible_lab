@@ -1,8 +1,11 @@
 all:
   hosts:
-    localhost: # not required, just for clarity
+    localhost:
       ansible_connection: local
-    managed_node:
-      ansible_connection: ssh # also not required, default connection method is ssh
-      ansible_user: kali
-      ansible_host: 10.0.2.15
+  children:
+    webservers:
+      hosts:
+        managed_node:
+          ansible_connection: ssh
+          ansible_user: kali
+          ansible_host: 10.0.2.15
