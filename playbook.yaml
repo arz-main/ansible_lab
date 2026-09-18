@@ -1,15 +1,39 @@
-- name: exercitiu despre bucle, conditii, portabilitate
-  hosts: all
+---
+- name: configure a web server
+  hosts: managed_node
+  remote_user: root
 
   tasks:
-    - name: check if cron is running
-      ansible.builtin.command: systemctl is-active cron
-      register: cron_state # saves the output of the module that ran
-      changed_when: false # doesn't mark this task as changed no matter what it does
-      failed_when: false # doesn't mark this task as failed no matter the return code
-      check_mode: false
+    - name: install web server
+      ansible.builtin.package:
+        name: apache2
+        state: latest
+      tags: instalare
 
-    - name: this should never print
-      ansible.builtin.debug:
-        msg: "very very secret info"
-      when: ( secret_var | default('')) == "anomaly"
+    - name: server config file
+      ansible.builtin.template:
+        src: /home/kali/Documents/Ansible_Project/templates/apache2.j2
+        dest: /etc/apache2/apache2.conf
+      notify: restart apache
+      tags: configurare
+
+    - name: enable and start the service
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+      tags: verificare
+
+    - name: create a static html page with custom value
+      ansible.builtin.template:
+        src: /home/kali/Documents/Ansible_Project/templates/index.html.j2
+        dest: /var/www/html/index.html
+
+      vars:
+        custom_value: text random scris in playbook.yaml
+
+  handlers:
+    - name: restart apache
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
