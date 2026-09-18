@@ -9,3 +9,14 @@ all:
           ansible_connection: ssh
           ansible_user: kali
           ansible_host: 10.0.2.15
+        managed_node2:
+          ansible_connection: ssh
+          ansible_user: kali
+          ansible_host: 10.0.2.15
+    dev:
+      hosts:
+        managed_node:
+
+    prod:
+      hosts:
+        managed_node2:
