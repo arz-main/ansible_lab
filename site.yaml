@@ -3,3 +3,8 @@
 
   roles: # conceptual functioneaza ca un copy paste din folderul roles. Toate artefactele necesare sunt puse aici
     - apache
+    - { role: ssh_hardening, tags: ssh }
+    - { role: firewall, tags: firewall }
+    - { role: fail2ban, tags: fail2ban }
+    - { role: unattended_upgrades, tags: updates }
+    - { role: admin_user, tags: admin }

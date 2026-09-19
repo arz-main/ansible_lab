@@ -1,0 +1,29 @@
+---
+- name: Instalez unattended-upgrades
+  ansible.builtin.package:
+    name:
+      - unattended-upgrades
+      - apt-listchanges
+    state: present
+
+- name: Configurez sursele de update automat (doar securitate, sau tot)
+  ansible.builtin.template:
+    src: 50unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Activez verificarea si aplicarea automata periodica
+  ansible.builtin.template:
+    src: 20auto-upgrades.j2
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ma asigur ca serviciul unattended-upgrades e activ
+  ansible.builtin.service:
+    name: unattended-upgrades
+    state: started
+    enabled: true

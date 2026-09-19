@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+# Configuratie fail2ban generata de rol. Nu edita manual.
+
+[DEFAULT]
+bantime = {{ fail2ban_bantime }}
+findtime = {{ fail2ban_findtime }}
+maxretry = {{ fail2ban_maxretry }}
+backend = {{ fail2ban_backend }}
+ignoreip = {{ fail2ban_ignoreip | join(' ') }}
+
+[sshd]
+enabled = true
+port = {{ fail2ban_ssh_port }}
+filter = sshd
+logpath = %(sshd_log)s
+maxretry = {{ fail2ban_maxretry }}

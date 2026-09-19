@@ -1,0 +1,34 @@
+---
+- name: Verific ca lista de utilizatori permisi nu e goala
+  ansible.builtin.assert:
+    that:
+      - ssh_allowed_users | length > 0
+    fail_msg: "ssh_allowed_users trebuie sa contina cel putin un utilizator, altfel niciun cont nu se va putea conecta prin SSH."
+
+- name: Instalez openssh-server
+  ansible.builtin.package:
+    name: openssh-server
+    state: present
+
+- name: Fac backup la sshd_config existent, o singura data
+  ansible.builtin.copy:
+    src: /etc/ssh/sshd_config
+    dest: /etc/ssh/sshd_config.bak
+    remote_src: true
+    force: false
+
+- name: Aplic configuratia SSH intarita
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
+    validate: "sshd -t -f %s"
+  notify: Restart sshd
+
+- name: Ma asigur ca serviciul sshd e pornit si activat la boot
+  ansible.builtin.service:
+    name: "{{ ssh_service_name | default('ssh') }}"
+    state: started
+    enabled: true

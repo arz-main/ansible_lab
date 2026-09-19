@@ -1,0 +1,44 @@
+---
+- name: Audit firewall
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Citesc statusul ufw
+      ansible.builtin.command: ufw status verbose
+      register: ufw_status
+      changed_when: false
+
+    - name: Verific ca ufw e activ
+      ansible.builtin.assert:
+        that:
+          - "'Status: randomstat' in ufw_status.stdout"
+        fail_msg: "ESUAT: ufw nu e activ pe {{ inventory_hostname }}."
+        success_msg: "OK: ufw activ"
+
+    - name: Verific politica implicita deny pe incoming
+      ansible.builtin.assert:
+        that:
+          - "'Default: deny (incoming)' in ufw_status.stdout"
+        fail_msg: "ESUAT: politica implicita de incoming nu e deny pe {{ inventory_hostname }}."
+        success_msg: "OK: politica implicita deny (incoming)"
+
+    - name: Verific ca portul SSH e permis explicit
+      ansible.builtin.assert:
+        that:
+          - "(firewall_ssh_port | default(22) | string) in ufw_status.stdout"
+        fail_msg: "ESUAT: portul SSH nu are regula explicita in ufw pe {{ inventory_hostname }}."
+        success_msg: "OK: regula explicita pentru SSH prezenta"
+
+    - name: Verific regulile explicite suplimentare (ex HTTP/HTTPS)
+      ansible.builtin.assert:
+        that:
+          - "(item.port | string) in ufw_status.stdout"
+        fail_msg: "ESUAT: regula pentru {{ item.comment | default(item.port) }} lipseste din ufw pe {{ inventory_hostname }}."
+        success_msg: "OK: regula pentru {{ item.comment | default(item.port) }} prezenta"
+      loop: "{{ firewall_allowed_rules | default([]) }}"
+
+    - name: Audit firewall finalizat cu succes
+      ansible.builtin.debug:
+        msg: "Firewall configurat corect pe {{ inventory_hostname }}."

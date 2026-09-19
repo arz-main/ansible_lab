@@ -1,0 +1,21 @@
+---
+# Portul SSH, trebuie sa corespunda cu ssh_port din rolul ssh_hardening
+fail2ban_ssh_port: 22
+
+# Numarul de incercari esuate inainte de blocare
+fail2ban_maxretry: 4
+
+# Durata blocarii, in secunde (3600 = 1 ora)
+fail2ban_bantime: 3600
+
+# Fereastra de timp in care se numara incercarile, in secunde (10 min)
+fail2ban_findtime: 600
+
+# Backend de citire a log-urilor
+fail2ban_backend: systemd
+
+# Lista de IP-uri/retele niciodata blocate (whitelist)
+# Adauga aici IP-ul propriu inainte de a rula, ca sa nu te blochezi singur
+fail2ban_ignoreip:
+  - 127.0.0.1/8
+  - ::1

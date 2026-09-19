@@ -1,0 +1,37 @@
+---
+- name: Verific ca hash-ul parolei a fost furnizat din vault
+  ansible.builtin.assert:
+    that:
+      - admin_password_hash is defined
+      - admin_password_hash | length > 0
+    fail_msg: >
+      admin_password_hash nu e definit. Verifica ca vault_admin_password_hash
+      exista in group_vars/.../vault.yml si ca fisierul e decriptat corect
+      la rulare (--ask-vault-pass sau --vault-password-file).
+
+- name: Creez contul administrativ
+  ansible.builtin.user:
+    name: "{{ admin_username }}"
+    shell: "{{ admin_shell }}"
+    groups: "{{ admin_groups }}"
+    append: true
+    password: "{{ admin_password_hash }}"
+    update_password: on_create
+    state: present
+
+- name: Adaug cheia publica SSH pentru contul administrativ
+  ansible.posix.authorized_key:
+    user: "{{ admin_username }}"
+    key: "{{ admin_ssh_pubkey }}"
+    state: present
+  when: admin_ssh_pubkey | length > 0
+
+- name: Permit grupului sudo escaladarea privilegiilor
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/{{ admin_username }}
+    line: "{{ admin_username }} ALL=(ALL) ALL"
+    create: true
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: "0440"

@@ -1,0 +1,16 @@
+---
+# Aplica doar update-uri de securitate, nu si actualizari generale de versiune
+unattended_security_only: true
+
+# Reporneste automat sistemul daca un update de kernel o cere
+unattended_auto_reboot: false
+unattended_auto_reboot_time: "03:00"
+
+# Curata automat pachetele vechi
+unattended_remove_unused_deps: true
+unattended_remove_unused_kernel_packages: true
+
+# Verifica update-uri zilnic
+unattended_update_interval_days: 1
+unattended_download_interval_days: 1
+unattended_upgrade_interval_days: 1

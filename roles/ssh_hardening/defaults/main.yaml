@@ -1,0 +1,25 @@
+---
+# Portul pe care asculta SSH
+ssh_port: 22
+ 
+# Autentificare exclusiv cu cheie
+ssh_pubkey_auth: "yes"
+ssh_password_auth: "no"
+ssh_challenge_response_auth: "no"
+ 
+# Interzice conectarea directa ca root
+ssh_permit_root_login: "no"
+ 
+# Lista de utilizatori permisi sa se conecteze prin SSH
+# Se suprascrie obligatoriu in inventory/group_vars pentru fiecare mediu
+ssh_allowed_users:
+  - deploy
+  - admin
+ 
+# Optiuni suplimentare de intarire
+ssh_max_auth_tries: 3
+ssh_client_alive_interval: 300
+ssh_client_alive_count_max: 2
+ssh_x11_forwarding: "no"
+ssh_permit_empty_passwords: "no"
+ 

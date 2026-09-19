@@ -1,0 +1,24 @@
+// {{ ansible_managed }}
+// Configuratie generata de rol. Nu edita manual.
+
+Unattended-Upgrade::Allowed-Origins {
+{% if ansible_distribution == "Ubuntu" %}
+        "${distro_id}:${distro_codename}-security";
+{% if not unattended_security_only %}
+        "${distro_id}:${distro_codename}-updates";
+{% endif %}
+{% else %}
+        "origin=Debian,codename=${distro_codename},label=Debian-Security";
+{% if not unattended_security_only %}
+        "origin=Debian,codename=${distro_codename},label=Debian";
+{% endif %}
+{% endif %}
+};
+
+Unattended-Upgrade::Remove-Unused-Dependencies "{{ unattended_remove_unused_deps | lower }}";
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "{{ unattended_remove_unused_kernel_packages | lower }}";
+
+Unattended-Upgrade::Automatic-Reboot "{{ unattended_auto_reboot | lower }}";
+Unattended-Upgrade::Automatic-Reboot-Time "{{ unattended_auto_reboot_time }}";
+
+Unattended-Upgrade::SyslogEnable "true";

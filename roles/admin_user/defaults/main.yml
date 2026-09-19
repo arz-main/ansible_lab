@@ -1,0 +1,13 @@
+---
+admin_username: sysadmin
+admin_shell: /bin/bash
+admin_groups:
+  - sudo
+ 
+# Optional: cheie publica SSH pentru acces fara parola
+admin_ssh_pubkey: ""
+ 
+# Parola (hash) vine din group_vars/.../vault.yml, sub numele vault_admin_password_hash
+# Nu se defineste aici, doar se refera:
+admin_password_hash: "{{ vault_admin_password_hash }}"
+ 

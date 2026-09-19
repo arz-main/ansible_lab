@@ -1,0 +1,43 @@
+---
+- name: Instalez ufw
+  ansible.builtin.package:
+    name: ufw
+    state: present
+
+- name: Setez politica implicita pentru trafic de intrare (deny)
+  community.general.ufw:
+    direction: incoming
+    policy: "{{ firewall_default_incoming }}"
+
+- name: Setez politica implicita pentru trafic de iesire (allow)
+  community.general.ufw:
+    direction: outgoing
+    policy: "{{ firewall_default_outgoing }}"
+
+- name: Permit SSH cu rate limiting, impotriva brute-force
+  community.general.ufw:
+    rule: limit
+    port: "{{ firewall_ssh_port }}"
+    proto: tcp
+    comment: "SSH cu limitare"
+  when: firewall_ssh_rate_limit | bool
+
+- name: Permit SSH fara rate limiting
+  community.general.ufw:
+    rule: allow
+    port: "{{ firewall_ssh_port }}"
+    proto: tcp
+    comment: "SSH"
+  when: not (firewall_ssh_rate_limit | bool)
+
+- name: Adaug regulile explicite pentru serviciile necesare
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ firewall_allowed_rules }}"
+
+- name: Activez ufw
+  community.general.ufw:
+    state: enabled

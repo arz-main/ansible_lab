@@ -1,7 +1,3 @@
-- name: print server name from vault
-  ansible.builtin.debug:
-    var: server_name
-
 - name: install web server
   ansible.builtin.package:
     name: apache2
@@ -11,13 +7,6 @@
   ansible.builtin.template:
     src: apache2.j2
     dest: /etc/apache2/apache2.conf
-  notify: restart apache service
-
-- name: testing db config template
-  ansible.builtin.template:
-    src: db_config.j2
-    dest: /etc/apache2/db_config.conf
-    mode: "0600"
   notify: restart apache service
 
 - name: deploy vhost config file
